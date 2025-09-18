@@ -326,7 +326,7 @@ function(input, output, session) {
     req(rv$occ)
     req(rv$vt)
   
-  rv$rr_joined_filter <- rr_joined |> filter(UnitNo %in% rv$vt$UnitNo)
+  rv$rr_joined_filter <- rv$rr_joined |> filter(UnitNo %in% rv$vt$UnitNo)
   
   output$rr_joined_filter <- renderReactable({
     sticky_style <- list(backgroundColor = "#f7f7f7")
