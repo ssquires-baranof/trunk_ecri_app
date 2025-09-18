@@ -1,0 +1,10 @@
+SiteID,Lease No,Store Name,Unit No,First Name,Last Name,Units,W,L,UnitType,Customer Rate,Diff% from Base,Base Rent,Move in Date,Last Chg Date,Autopay,IncLevel,Rec New Price,Rec Rate Chg,Rec Rate Change %,Status,New Rate,DtInEffect,Comment,Submit Type,Chg%
+100000002,"""250429151744684""",Lucas - 575 S. Angel Parkway,"""Unit: A075""",,"Carle, Carla",1,10,10,10X10-CDN,94,0.085106383,102,4/29/2025,,1,3,105,11,0.12,1,,9/29/2025,,,
+100000002,"""250425192449767""",Lucas - 575 S. Angel Parkway,"""Unit: B054""",,"Porras, Adrian",1,5,5,5X5-CDN,28,0.071428571,30,4/25/2025,,1,5,32,4,0.08,1,,9/25/2025,,,
+100000002,"""250426094207755""",Lucas - 575 S. Angel Parkway,"""Unit: B076""",,"Bush, John",1,10,10,10X10-CDN,94,0.085106383,102,4/26/2025,,1,3,105,11,0.12,1,,9/26/2025,,,
+100000002,"""137198""",Lucas - 575 S. Angel Parkway,"""Unit: C001""",,"Bupho, Theepaka",1,10,15,10x15-NON,212,-0.382075472,131,10/13/2021,7/1/2024,0,6,212,0,0.08,1,,10/1/2025,,,
+100000002,"""241123112341375""",Lucas - 575 S. Angel Parkway,"""Unit: C032""",,"HERNANDEZ, ROSA",2,10,15,10x15-NON,211,-0.379146919,131,11/23/2024,,1,7,211,0,0.08,1,,9/23/2025,,,
+100000002,"""250421172452800""",Lucas - 575 S. Angel Parkway,"""Unit: C083""",,"Trigg, Vernell",1,10,10,10X10-CDN,84,0.214285714,102,4/21/2025,,1,3,94,10,0.12,1,,9/21/2025,,,
+100000002,"""89658""",Lucas - 575 S. Angel Parkway,"""Unit: C140""",,"Fulmer, Pat",1,10,5,10x5-CDN,73,-0.356164384,47,8/24/2020,6/1/2023,0,7,73,0,0.08,1,,10/1/2025,,,
+100000002,"""171613""",Lucas - 575 S. Angel Parkway,"""Unit: C158""",,"Aguilar, John",1,10,15,10X15-CDN,251,-0.482071713,130,9/30/2022,8/1/2024,0,6,251,0,0.08,1,,10/1/2025,,,
+100000002,"""250426175722457""",Lucas - 575 S. Angel Parkway,"""Unit: D122""",,"Patterson, James",2,10,10,10X10-CDN,94,0.085106383,102,4/26/2025,,1,3,105,11,0.12,1,,9/26/2025,,,

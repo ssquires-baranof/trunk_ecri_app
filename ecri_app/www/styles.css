@@ -1,0 +1,247 @@
+/*#color pallet 
+  #13213D || dark blue
+  #9FCC52 || green
+  #075481 || light blue
+  #F5FAFC || off-white
+  #efefef || off-white 2
+  #212529 || black
+*/
+
+<link rel="stylesheet" href="https://use.typekit.net/ajs3sim.css">
+
+html, body {
+  background-color: #efefef; 
+  width:100%; 
+  height:100%; 
+  font-family: "freight-sans-pro", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+#login-button {
+  background-color: #13213D; 
+  width:100%; 
+  height:100%; 
+  font-family: "freight-sans-pro", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+ #logout-button {
+  background-color: #13213D;
+  opacity: .6;
+  font-size: 8px;
+  align-items: center;
+  font-family: "freight-sans-pro", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  
+ }
+
+.main-header{
+  border-bottom: none!important;
+}
+/* SIDEBAR AND CONTROLBAR  */
+
+
+ 
+.sidebar .nav-icon, 
+.fa-angles-right{
+  color: #075481
+  }
+
+.sidebar .nav-link p {
+  font-family: "freight-sans-pro", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: .5rem 
+  padding: 15px 10px; 
+  border-radius: 6px;
+  
+}
+.sidebar .nav-link p:hover, .sidebar .nav-link p.active {
+   color: #fff; 
+   background-color: #13213D;
+   transition: 0.5s ease;
+   padding: 15px 10px; 
+   border-radius: 6px;
+  
+}
+
+.nav-pills .nav-link {color: #13213D; padding: 20px 16px; border-radius: 6px;}
+.nav-pills .nav-link:hover {color: #fff; background: #13213D; transition: 0.5s ease;} 
+.nav-pills .nav-link.active, .nav-pills .nav-link:active {color: #fff !important; background: #13213D !important; transition: 0.5s ease;}
+
+.control-sidebar-slide-open .control-sidebar, 
+.control-sidebar-slide-open .control-sidebar::before {
+  padding: 35px !important;
+  background-color: #efefef !important;
+}            
+               
+ .btn-sm .fas {color: #efefef; opacity: .6}
+ 
+     
+/* TAB PANELS AND BOXES/CARDS ARE IN UI.R FILE */               
+ 
+
+.highcharts-boxplot-box{
+  fill: #efefef;
+}
+ 
+ 
+.highcharts-boxplot-series.highcharts-color-0 .highcharts-boxplot-box,
+.highcharts-boxplot-series.highcharts-color-0 .highcharts-boxplot-median,
+.highcharts-boxplot-series.highcharts-color-0 .highcharts-boxplot-whisker,
+.highcharts-boxplot-series.highcharts-color-0 .highcharts-boxplot-stem {
+  stroke: #9FCC52 !important; /* green for Predicted */
+}
+
+.highcharts-boxplot-series.highcharts-color-1 .highcharts-boxplot-box,
+.highcharts-boxplot-series.highcharts-color-1 .highcharts-boxplot-median,
+.highcharts-boxplot-series.highcharts-color-1 .highcharts-boxplot-whisker,
+.highcharts-boxplot-series.highcharts-color-1 .highcharts-boxplot-stem {
+  stroke: #13213D !important; /* orange for Observed */
+}
+
+.highcharts-boxplot-series.highcharts-color-2 .highcharts-boxplot-box,
+.highcharts-boxplot-series.highcharts-color-2 .highcharts-boxplot-median,
+.highcharts-boxplot-series.highcharts-color-2 .highcharts-boxplot-whisker,
+.highcharts-boxplot-series.highcharts-color-2 .highcharts-boxplot-stem {
+  stroke: #075481 !important; /* orange for Observed */
+}
+
+.highcharts-tooltip-box {
+  stroke: #212529 !important;
+  stroke-width: 2px !important;
+  fill: #ffffff !important;
+}
+              
+               .bg-secondary {background-image: url('oceanview.jpg'),
+               linear-gradient(to right, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.5) 51%, rgba(0, 0, 0, 0.5) 100%);
+               color: #075481; 
+               font-family: "freight-sans-pro", sans-serif;
+               font-weight: 400;
+               font-style: normal;
+               font-size: 18px; margin: 10px;
+               padding: 15px 45px; transition: 0.5s;
+               background-size: cover;  /* Make sure the image covers the container */
+               background-position: center;  /* Center the image */
+               box-shadow: none; display: block; border-radius:0px}
+               
+               .bg-secondary:hover {background-position: right center; background-size: 150%;  /* Slight zoom effect on hover */
+               color: #13213D; text-decoration: none;}
+               .dark-mode .bg-secondary {box-shadow: none;}
+
+               div.small-box.bg-primary,
+               .bg-primary {
+               background-color: #13213D !important;
+               font-family: "freight-sans-pro", sans-serif;
+               font-weight: 400;
+               font-style: normal;
+               font-size: 15px; 
+               margin: 10px 0px;
+               background-position: center;  /* Center the image */
+               box-shadow: none; display: block; border-radius:0px}  
+              
+               div.small-box.bg-warning,
+               .bg-warning {
+               background-color: #9FCC52 !important;
+               font-family: "freight-sans-pro", sans-serif;
+               font-weight: 400;
+               font-style: normal;
+               font-size: 15px; 
+               margin: 10px 0px;
+               padding: 5px 25px; transition: 0.5s;
+               background-position: center;  /* Center the image */
+               box-shadow: none; display: block; border-radius:0px}  
+              
+              div.small-box.bg-danger,
+               .bg-danger {
+               background-color: #075481 !important;
+               font-family: "freight-sans-pro", sans-serif;
+               font-weight: 400;
+               font-style: normal;
+               font-size: 15px; 
+               margin: 10px 0px;
+               padding: 5px 25px; transition: 0.5s;
+               background-position: center;  /* Center the image */
+               box-shadow: none; display: block; border-radius:0px}  
+               
+               div.small-box.bg-info,
+               .bg-info {
+               background-color: #A1C1AC !important;
+              font-family: "freight-sans-pro", sans-serif;
+              font-weight: 400;
+              font-style: normal;
+               font-size: 15px; 
+               margin: 10px 0px;
+               padding: 5px 25px; transition: 0.5s;
+               background-position: center;  /* Center the image */
+               box-shadow: none; display: block; border-radius:0px}  
+              
+               div.small-box.bg-success,
+               .bg-success {
+               background-color: #F89B55 !important;
+               font-family: "freight-sans-pro", sans-serif;
+               font-weight: 400;
+               font-style: normal;
+               font-size: 15px; 
+               margin: 10px 0px;
+               padding: 5px 25px; transition: 0.5s;
+               background-position: center;  /* Center the image */
+               box-shadow: none; display: block; border-radius:0px}  
+               
+              
+              
+              #noHeaderTabs a {display: none, background-color: #075481}
+                
+               .brand-text {font-family: 'freight-sans-pro', sans-serif; font-size: 70%; color: #075481}
+               label {color: #075481;}
+               .brand-image {border-radius: 0; box-shadow: none !important;}
+               .dark-mode label {font-size: 14px}
+               .dark-mode .card {color: #F3EBD6;}
+               .dark-mode .Reactable .rt-table {background-color: #075481}
+               .leaflet-control-layers {background-color: #F3EBD6;}
+               
+ /* SLIDERS */              
+.irs {font-family:'freight-sans-pro', sans-serif;}
+.irs-grid-pol {display:none}
+
+.irs-grid-text {color: #075481; font-size: 14px}
+
+.irs-min {display: none}
+
+.irs-m ax {display: none}
+
+.irs--shiny .irs-bar {background: #075481; border-top: 2px solid #075481; border-bottom: 2px solid #075481}
+
+.irs-bar-edge {background: black; border: 2px solid black; heigh 25px}
+
+.irs--shiny .irs-from, .irs--shiny .irs-to, .irs--shiny .irs-single {padding: 4px; margin-bottom: 5px; line-height: .7; 
+               background-color: #075481; font-size: 14px; border: 2px solid #075481}
+
+.irs--shiny .irs-handle {margin-top: 5px; border: 4px solid #075481; background-color: #59101a}
+               
+.small-box-footer {height: 0px !important;}
+               
+               
+               
+               .selectize-dropdown [data-selectable].option.active {background-color: #F3EBD6; color: #380A10;}
+               .dark-mode .selectize-input.full {background-color: #D8D8D8; color: #3F4A58; border: 2px solid #3F4A58;} 
+               .selectize-input.full {border: 2px solid #3F4A58;} 
+               .dark-mode .selectize-dropdown [data-selectable].option.active {background-color: #F3EBD6; color: #380A10;}
+               .selectize-dropdown .selected {background-color: #eadeba;}
+               .selectize-input:hover {color: #59101a; border: 2px solid #380A10;}
+               .dark-mode .selectize-input:hover {color: #F3EBD6; border: 2px solid white}
+               
+               .dark-mode .selectize-dropdown-content {background-color: #D8D8D8; color: #3F4A58;} 
+               
+               .leaflet-tooltip {border: 1px solid #3F4A58}
+               
+               .section.sidebar.my-class {overflow: visible; z-index: 10;}
+               
+
+
+/* REACTABLE TABLES AND CHARTS */
+
+.ReactTable {background-color: #F3EBD6 !important;}
