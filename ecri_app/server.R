@@ -304,7 +304,7 @@ function(input, output, session) {
     req(rv$rr)
     req(rv$occ)
   
-  rv$rr_joined <- rr_joiner(rv$rr, rv$unit_type_rr, rv$move_in_rate, premium_buckets, rv$occ, rr_percentiles, ecri_cap)
+  rv$rr_joined <- rr_joiner(rv$rr, rv$unit_type_rr, rv$move_in_rate, premium_buckets, rv$occ, rv$rr_percentiles, ecri_cap)
   }
   )
   
