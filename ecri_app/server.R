@@ -200,8 +200,8 @@ function(input, output, session) {
       ecri_multiplier = c(1.22, 1.17, 1.12, 1.07, 1.02, 0.97, 0.92, 0.87, 0.82, 0.77)
     ) |> 
       mutate(
-        rate_low = quantile(rr$ActualRent, percentile_low),
-        rate_high = quantile(rr$ActualRent, percentile_high)-.01
+        rate_low = quantile(rv$rr$ActualRent, percentile_low),
+        rate_high = quantile(rv$rr$ActualRent, percentile_high)-.01
       )
     
     rv$unit_type_rr <- unit_type_rr_calc(rv$rr, .7)
