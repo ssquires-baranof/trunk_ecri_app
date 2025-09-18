@@ -192,7 +192,10 @@ function(input, output, session) {
         MoveInDate = as_date(mdy_hms(MoveInDate)),
         los = as.numeric(Sys.Date() - MoveInDate) / 30.44,
       ) |> left_join(sf_bin, sf_by) |>
-      left_join(unit_attribute_codes, by = "unit_attribute_code")
+      left_join(unit_attribute_codes, by = "unit_attribute_code") |> 
+      select(-LeaseNo, -UnitTypeID, -TenantName, -BillingType, 
+             -TenantLastName, -lower, -upper, -PaidThruDate, -NextBillingDate,
+             -FacilityId, -FacilityName)
     
     rv$rr_percentiles <- data.frame(
       percentile_low = c(0, .1, .2, .3, .4, .5, .6, .7, .8, .9),
@@ -267,7 +270,7 @@ function(input, output, session) {
         occ_sf = sf * Occ,
         occ_sf_rate = occ_sf / total_sf
       ) |> left_join(sf_bin, sf_by) |>
-      left_join(unit_attribute_codes, by = "unit_attribute_code")
+      left_join(unit_attribute_codes, by = "unit_attribute_code") 
     
     rv$unit_type_occ <- rv$occ |>
       group_by(unit_description, sf_bin_name) |>
@@ -286,7 +289,8 @@ function(input, output, session) {
     rv$occ <- rv$occ |>
       left_join(rv$unit_type_occ, by = c("unit_description", "sf_bin_name"))|>
       left_join(occupancy_buckets, occupancy_bucket_by) |>
-      left_join(unit_type_pct_buckets, build_mix_bucket_by) 
+      left_join(unit_type_pct_buckets, build_mix_bucket_by) |>
+      select(-...19, -lower, -upper, -low.x, -high.x, -low.y, -high.y)
     
     output$occ <- renderReactable({
       sticky_style <- list(backgroundColor = "#f7f7f7")

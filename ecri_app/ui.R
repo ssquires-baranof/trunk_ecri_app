@@ -45,9 +45,9 @@ shinyUI(dashboardPage(
     skin='dark',
     controlbarIcon = icon("wand-sparkles", lib= "font-awesome"),
     title =  dashboardBrand(
-      title = "ECRI",
+      title = "_",
       color = "primary",
-      image = "logo.png",
+      image = "https://cdn.trunkspacestorage.com/wp-content/uploads/2024/06/21-300x76.png",
       
     ),
     useShinyjs(),
