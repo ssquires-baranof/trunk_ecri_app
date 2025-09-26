@@ -84,7 +84,6 @@ move_in_rate_calc <- function(df, months) {
 premium_bucket_by <- join_by(between(in_place_premium, low, high)) 
 rr_percentiles_by <- join_by(between(ActualRent, rate_low, rate_high))
 
-ecri_cap <- 80
 
 rr_joiner <- function(rr_df, unit_type_rr_df, move_in_rate_df, premium_buckets_df, occ_df, rr_percentiles_df, ecri_cap_input) {
   
@@ -147,6 +146,8 @@ los_ecri_calc <- function(rr_joined_filter_df, los_bins_df) {
 
 function(input, output, session) {
   
+  reactable_extras_dependency()
+  
   output$premium_buckets <- renderReactable({
     sticky_style <- list(backgroundColor = "#f7f7f7")
     
@@ -174,7 +175,8 @@ function(input, output, session) {
     
   )
   
-  observeEvent(input$rr, {
+  observeEvent(list(input$rr,
+                    input$ecri_pct_target), {
 
     req(input$rr)
     
@@ -200,14 +202,14 @@ function(input, output, session) {
     rv$rr_percentiles <- data.frame(
       percentile_low = c(0, .1, .2, .3, .4, .5, .6, .7, .8, .9),
       percentile_high = c(.1, .2, .3, .4, .5, .6, .7, .8, .9, 1),
-      ecri_multiplier = c(1.22, 1.17, 1.12, 1.07, 1.02, 0.97, 0.92, 0.87, 0.82, 0.77)
+      ecri_multiplier = c( 1.22, 1.17, 1.12, 1.07, 1.02, 0.97, 0.92, 0.87, 0.82, 0.77)
     ) |> 
       mutate(
         rate_low = quantile(rv$rr$ActualRent, percentile_low),
         rate_high = quantile(rv$rr$ActualRent, percentile_high)-.01
       )
     
-    rv$unit_type_rr <- unit_type_rr_calc(rv$rr, .7)
+    rv$unit_type_rr <- unit_type_rr_calc(rv$rr, input$ecri_pct_target / 100)
     
     rv$move_in_rate <- move_in_rate_calc(rv$rr, 3)
     
@@ -303,12 +305,14 @@ function(input, output, session) {
   )
   
   
-  observeEvent(list(rv$rr, rv$occ),{
+  observeEvent(list(rv$rr, rv$occ,
+                    rv$unit_type_rr,
+                    input$ecri_dollar_cap),{
     
     req(rv$rr)
     req(rv$occ)
   
-  rv$rr_joined <- rr_joiner(rv$rr, rv$unit_type_rr, rv$move_in_rate, premium_buckets, rv$occ, rv$rr_percentiles, ecri_cap)
+  rv$rr_joined <- rr_joiner(rv$rr, rv$unit_type_rr, rv$move_in_rate, premium_buckets, rv$occ, rv$rr_percentiles, input$ecri_dollar_cap)
   }
   )
   
@@ -324,7 +328,7 @@ function(input, output, session) {
     }
   )
   
-  observeEvent(list(rv$rr, rv$occ, rv$vt),{
+  observeEvent(list(rv$rr, rv$occ, rv$vt, input$ecri_dollar_cap),{
     
     req(rv$rr)
     req(rv$occ)

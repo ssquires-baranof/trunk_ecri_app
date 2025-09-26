@@ -9,7 +9,6 @@ library(highcharter)
 library(shinyauthr)
 
 
-
 options(spinner.color="#13213D", spinner.color.background="#efefef", spinner.size=2)
 options(digits=10)
 
@@ -37,6 +36,7 @@ theme <- create_theme(
 
 
 shinyUI(dashboardPage(
+  
   freshTheme = theme,
   fullscreen = TRUE,
   help = FALSE,
@@ -78,12 +78,12 @@ shinyUI(dashboardPage(
       menuItem(
         "Rent Roll",
         tabName = "rent_roll",
-        icon = icon("person-hiking", lib= "font-awesome")
+        icon = icon("money-bill", lib= "font-awesome")
       ),
       menuItem(
         "ECRI",
         tabName = "ecri",
-        icon = icon("person-hiking", lib= "font-awesome")
+        icon = icon("arrow-up-right-dots", lib= "font-awesome")
       )
       
     )
@@ -173,6 +173,24 @@ shinyUI(dashboardPage(
                    width = 12, collapsible = FALSE,
                    maximizable=FALSE,
                    background = "primary",
+                   tabPanel(title = "Caps & Targets",
+                   
+                   
+                   
+                   numericInput("ecri_dollar_cap", 
+                               label = "First / Subsequent ECRI $ Cap:",
+                               value = 80),
+                   
+                   sliderInput("ecri_pct_cap", 
+                               label = "First / Subsequent ECRI % Cap	:",
+                               min = 0, max = 100, value = 50, 
+                               post = " %"),
+                   
+                   sliderInput("ecri_pct_target", 
+                               label = "Percentile Target	:",
+                               min = 0, max = 100, value = 70, 
+                               post = " %")
+                 ),
                    tabPanel(title = "Premium Buckets",
                             reactableOutput("premium_buckets")),
                    tabPanel(title = "Rent Rate Percentiles",
