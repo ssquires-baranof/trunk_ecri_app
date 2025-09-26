@@ -146,8 +146,6 @@ los_ecri_calc <- function(rr_joined_filter_df, los_bins_df) {
 
 function(input, output, session) {
   
-  reactable_extras_dependency()
-  
   output$premium_buckets <- renderReactable({
     sticky_style <- list(backgroundColor = "#f7f7f7")
     
