@@ -84,8 +84,31 @@ move_in_rate_calc <- function(df, months) {
 premium_bucket_by <- join_by(between(in_place_premium, low, high)) 
 rr_percentiles_by <- join_by(between(ActualRent, rate_low, rate_high))
 
+disc_prep <- function(disc_path) {
+  disc_df <- read_excel(disc_path, skip = 3)
+  
+  disc_df <- disc_df[-1,]
+  
+  disc_df <- disc_df |> 
+    mutate(Date = mdy(Date)) |>
+    group_by(`Unit #`) |>
+    arrange(desc(Date)) |> 
+    summarise_all(first) |>
+    mutate(months_since_promo = as.numeric((Sys.Date() - Date) / 30.4),
+           disc_tenant = gsub(",.*", "", gsub("\\s.*", "", `Tenant Name`))) |>
+    rename(most_recent_promo_date = Date,
+           DiscTenantName = `Tenant Name`, UnitNo = `Unit #`,
+           DiscountedRate = `Discounted Rate`, DiscountAmount = `Discount Amount`,
+           DiscountTermType = `Discount Term / Type`) |>
+    select(disc_tenant, DiscTenantName, UnitNo, most_recent_promo_date, months_since_promo, 
+           DiscountedRate, DiscountAmount, DiscountTermType)
+  
+  return(disc_df)
+}
 
-rr_joiner <- function(rr_df, unit_type_rr_df, move_in_rate_df, premium_buckets_df, occ_df, rr_percentiles_df, ecri_cap_input) {
+disc_by <- join_by(UnitNo)
+
+rr_joiner <- function(rr_df, unit_type_rr_df, move_in_rate_df, premium_buckets_df, occ_df, rr_percentiles_df, ecri_cap_input, disc_df) {
   
   rr_df <- rr_df |> left_join(unit_type_rr_df, by = c("unit_description", "sf_bin_name")) |>
     left_join(move_in_rate_df, by = "sf_bin_name") |>
@@ -93,6 +116,7 @@ rr_joiner <- function(rr_df, unit_type_rr_df, move_in_rate_df, premium_buckets_d
     left_join(premium_buckets_df, premium_bucket_by) |>
     left_join(occ_df |> select(`Unit Type`, unit_type_occ_sf_rate, occupancy_bucket, unit_type_pct, unit_type_bucket), by = c("UnitType" = "Unit Type")) |>
     left_join(rr_percentiles_df, rr_percentiles_by) |>
+    left_join(disc_df, disc_by) |>
     mutate(
       ecri_cap = ecri_cap_input,
       potential_ecri = (top_quartile_rate - rent_psf) * ecri_multiplier * sf,
@@ -169,7 +193,8 @@ function(input, output, session) {
     ecri_premium_buckets = NULL,
     los_ecri = NULL,
     current_in_place_rate_psf = NULL,
-    projected_in_place_rate_psf = NULL
+    projected_in_place_rate_psf = NULL,
+    disc = NULL
     
   )
   
@@ -180,20 +205,19 @@ function(input, output, session) {
     
     rr_path <- input$rr$datapath
     
-    read.csv(rr_path)
-    
-    rv$rr <- read.csv(rr_path) |>
+    rv$rr <- read_excel(rr_path) |>
       mutate(
         sf = 
           as.numeric(sub("X.*", "", toupper(UnitType))) * 
           as.numeric(gsub("[^0-9.]", "", sub(".*X", "", toupper(UnitType)))),
         unit_attribute_code = sub(".*-", "", toupper(UnitType)),
         rent_psf = ActualRent / sf,
-        MoveInDate = as_date(mdy_hms(MoveInDate)),
+        MoveInDate = as_date(ymd(MoveInDate)),
         los = as.numeric(Sys.Date() - MoveInDate) / 30.44,
+        UnitNo = as.character(UnitNo)
       ) |> left_join(sf_bin, sf_by) |>
       left_join(unit_attribute_codes, by = "unit_attribute_code") |> 
-      select(-LeaseNo, -UnitTypeID, -TenantName, -BillingType, 
+      select(-LeaseNo, -UnitTypeID, -BillingType, 
              -TenantLastName, -lower, -upper, -PaidThruDate, -NextBillingDate,
              -FacilityId, -FacilityName)
     
@@ -302,15 +326,37 @@ function(input, output, session) {
     }
   )
   
+  observeEvent(
+    list(input$disc), {
+      
+      req(input$disc)
+      
+      disc_path <- input$disc$datapath
+      
+      rv$disc <- disc_prep(disc_path)
+      
+      output$disc <- renderReactable({
+        sticky_style <- list(backgroundColor = "#f7f7f7")
+        
+        reactable(rv$disc)
+        
+      })
+      
+    }
+  )
+  
   
   observeEvent(list(rv$rr, rv$occ,
                     rv$unit_type_rr,
-                    input$ecri_dollar_cap),{
+                    input$ecri_dollar_cap,
+                    rv$disc),{
     
     req(rv$rr)
     req(rv$occ)
+    req(rv$disc)
   
-  rv$rr_joined <- rr_joiner(rv$rr, rv$unit_type_rr, rv$move_in_rate, premium_buckets, rv$occ, rv$rr_percentiles, input$ecri_dollar_cap)
+  rv$rr_joined <- rr_joiner(rv$rr, rv$unit_type_rr, rv$move_in_rate, premium_buckets, rv$occ, rv$rr_percentiles, input$ecri_dollar_cap, rv$disc)
+
   }
   )
   
@@ -321,18 +367,23 @@ function(input, output, session) {
     
     vt_path <- input$vt$datapath
     
-    rv$vt <- read.csv(vt_path) |>
-      mutate(UnitNo = sub('"', "", sub(".* ", "", toupper(Unit.No))))
+    rv$vt <- read_excel(vt_path) |>
+      mutate(UnitNo = sub('"', "", sub(".* ", "", toupper(`Unit No`))))
+
     }
   )
   
-  observeEvent(list(rv$rr, rv$occ, rv$vt, input$ecri_dollar_cap),{
+  observeEvent(list(rv$rr, rv$occ, rv$vt, input$ecri_dollar_cap, rv$disc),{
     
     req(rv$rr)
     req(rv$occ)
     req(rv$vt)
+    req(rv$disc)
+    
   
-  rv$rr_joined_filter <- rv$rr_joined |> filter(UnitNo %in% rv$vt$UnitNo)
+  rv$rr_joined_filter <- rv$rr_joined  |> 
+    filter(UnitNo %in% rv$vt$UnitNo & months_since_promo > 3 &
+             grepl(disc_tenant, TenantName))
   
   output$rr_joined_filter <- renderReactable({
     sticky_style <- list(backgroundColor = "#f7f7f7")

@@ -91,9 +91,10 @@ shinyUI(dashboardPage(
   controlbar =  dashboardControlbar(
     id = "controlbar",
     collapsed = T,
-    fileInput("rr", "Upload Rent Role", accept = c(".csv")),
+    fileInput("rr", "Upload Rent Role", accept = c(".xlsx")),
     fileInput("occ", "Upload Occupancy", accept = c(".xlsx")),
-    fileInput("vt", "Upload ECRI List", accept = c(".csv")),
+    fileInput("vt", "Upload ECRI List", accept = c(".xlsx")),
+    fileInput("disc", "Upload Discount Data", accept = c(".xlsx"))
     
   ),
   body = dashboardBody(
@@ -245,7 +246,9 @@ shinyUI(dashboardPage(
                    maximizable=FALSE,
                    background = "primary",
                    tabPanel(title = "ECRI",
-                            reactableOutput("rr_joined_filter"))
+                            reactableOutput("rr_joined_filter")),
+                   tabPanel(title = "Discounts",
+                            reactableOutput("disc"))
                  )
           )
         )

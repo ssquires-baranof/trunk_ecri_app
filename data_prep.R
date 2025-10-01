@@ -49,15 +49,16 @@ unit_type_pct_buckets <- data.frame(
   
 sf_by <- join_by(between(sf, lower, upper))
 
-rr <- read.csv("./RentRoll.csv") |>
+rr <- read_excel("/Users/shanesquires/baranof/trunk_ecri_app/Lucas Files/RentRoll 092325.xlsx") |>
   mutate(
     sf = 
       as.numeric(sub("X.*", "", toupper(UnitType))) * 
       as.numeric(gsub("[^0-9.]", "", sub(".*X", "", toupper(UnitType)))),
     unit_attribute_code = sub(".*-", "", toupper(UnitType)),
     rent_psf = ActualRent / sf,
-    MoveInDate = as_date(mdy_hms(MoveInDate)),
+    MoveInDate = as_date(ymd(MoveInDate)),
     los = as.numeric(Sys.Date() - MoveInDate) / 30.44,
+    UnitNo = as.character(UnitNo)
   ) |> left_join(sf_bin, sf_by) |>
   left_join(unit_attribute_codes, by = "unit_attribute_code")
 
@@ -137,6 +138,32 @@ rr_percentiles_by <- join_by(between(ActualRent, rate_low, rate_high))
 
 ecri_cap <- 80
 
+
+disc_prep <- function(disc_path) {
+  disc_df <- read_excel(disc_path, skip = 3)
+  
+  disc_df <- disc_df[-1,]
+  
+  disc_df <- disc_df |> 
+    mutate(Date = mdy(Date)) |>
+    group_by(`Tenant Name`, `Unit #`) |>
+    arrange(desc(Date)) |> 
+    summarise_all(first) |>
+    mutate(months_since_promo = as.numeric((Sys.Date() - Date) / 30.4)) |>
+    rename(most_recent_promo_date = Date,
+           TenantName = `Tenant Name`, UnitNo = `Unit #`,
+           DiscountedRate = `Discounted Rate`, DiscountAmount = `Discount Amount`,
+           DiscountTermType = `Discount Term / Type`) |>
+    select(TenantName, UnitNo, most_recent_promo_date, months_since_promo, 
+           DiscountedRate, DiscountAmount, DiscountTermType)
+  
+  return(disc_df)
+}
+
+disc <- disc_prep("/Users/shanesquires/baranof/trunk_ecri_app/Lucas Files/Discount 092325.xlsx")
+
+disc_by <- join_by(TenantName, UnitNo)
+
 rr_joiner <- function(rr_df, unit_type_rr_df, move_in_rate_df, premium_buckets_df, occ_df, rr_percentiles_df, ecri_cap_input) {
 
   rr_df <- rr_df |> left_join(unit_type_rr_df, by = c("unit_description", "sf_bin_name")) |>
@@ -145,6 +172,7 @@ rr_joiner <- function(rr_df, unit_type_rr_df, move_in_rate_df, premium_buckets_d
     left_join(premium_buckets_df, premium_bucket_by) |>
     left_join(occ_df |> select(`Unit Type`, unit_type_occ_sf_rate, occupancy_bucket, unit_type_pct, unit_type_bucket), by = c("UnitType" = "Unit Type")) |>
     left_join(rr_percentiles_df, rr_percentiles_by) |>
+    left_join(disc, disc_by) |>
     mutate(
       ecri_cap = ecri_cap_input,
       potential_ecri = (top_quartile_rate - rent_psf) * ecri_multiplier * sf,
@@ -165,10 +193,40 @@ rr_joiner <- function(rr_df, unit_type_rr_df, move_in_rate_df, premium_buckets_d
   return(rr_df)
 }
 
-rr_joined <- rr_joiner(rr, unit_type_rr, move_in_rate, premium_buckets, occ, rr_percentiles, ecri_cap)
+rr_joiner <- function(rr_df, unit_type_rr_df, move_in_rate_df, premium_buckets_df, occ_df, rr_percentiles_df, ecri_cap_input, disc_df) {
+  
+  rr_df <- rr_df |> left_join(unit_type_rr_df, by = c("unit_description", "sf_bin_name")) |>
+    left_join(move_in_rate_df, by = "sf_bin_name") |>
+    mutate(in_place_premium = (rent_psf - mean_move_in_rent_psf) / mean_move_in_rent_psf ) |>
+    left_join(premium_buckets_df, premium_bucket_by) |>
+    left_join(occ_df |> select(`Unit Type`, unit_type_occ_sf_rate, occupancy_bucket, unit_type_pct, unit_type_bucket), by = c("UnitType" = "Unit Type")) |>
+    left_join(rr_percentiles_df, rr_percentiles_by) |>
+    left_join(disc, disc_by) |>
+    mutate(
+      ecri_cap = ecri_cap_input,
+      potential_ecri = (top_quartile_rate - rent_psf) * ecri_multiplier * sf,
+      ecri = case_when(
+        rent_psf > top_quartile_rate ~ 0,
+        TRUE ~ pmin(ecri_cap, potential_ecri)
+      ),
+      ecri_pct = ecri / ActualRent,
+      los_bin = case_when(
+        los < 6 ~ "0 to < 6 Months",	
+        los >= 6 & los < 12 ~ "6 to < 12 Months",	
+        los >= 12 & los < 18 ~ "12 to < 18 Months",	
+        los >= 18 & los < 24 ~ "18 to < 24 Months",
+        los >= 24 ~ "24+ Months",
+        TRUE ~ "Other"
+      )
+    )
+  
+  return(rr_df)
+}
 
-vt <- read.csv("veritec.csv") |>
-  mutate(UnitNo = sub('"', "", sub(".* ", "", toupper(Unit.No))))
+rr_joined <- rr_joiner(rr, unit_type_rr, move_in_rate, premium_buckets, occ, rr_percentiles, ecri_cap, disc)
+
+vt <- read_excel("/Users/shanesquires/baranof/trunk_ecri_app/Lucas Files/veritec upload 092725.xlsx") |>
+  mutate(UnitNo = sub('"', "", sub(".* ", "", toupper(`Unit No`))))
 
 rr_joined_filter <- rr_joined |> filter(UnitNo %in% vt$UnitNo)
 
@@ -202,5 +260,9 @@ los_ecri_calc <- function(rr_joined_filter_df, los_bins_df) {
 }
 
 los_ecri <- los_ecri_calc(rr_joined_filter, los_bins)
+
+
+
+
 
 

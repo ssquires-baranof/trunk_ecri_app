@@ -1,0 +1,12 @@
+sudo ssh -i ~/.ssh/baws/ec2/baranof_aws.pem ubuntu@ec2-34-228-82-153.compute-1.amazonaws.com
+cd trunk_ecri_app
+git pull
+
+sudo docker container stop ecri_app
+sudo docker container rm ecri_app
+sudo docker system prune --all --volumes
+
+sudo docker build -t ecri_app .
+sudo docker run -p 80:8777 --name ecri_app ecri_app:latest
+
+http://ec2-34-228-82-153.compute-1.amazonaws.com/
