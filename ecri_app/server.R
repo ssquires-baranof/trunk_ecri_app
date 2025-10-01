@@ -369,6 +369,11 @@ function(input, output, session) {
     
     rv$vt <- read_excel(vt_path) |>
       mutate(UnitNo = sub('"', "", sub(".* ", "", toupper(`Unit No`))))
+    
+    output$vt <- renderReactable({
+      sticky_style <- list(backgroundColor = "#f7f7f7")
+      reactable(rv$vt)
+    })
 
     }
   )

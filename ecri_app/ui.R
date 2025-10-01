@@ -247,6 +247,8 @@ shinyUI(dashboardPage(
                    background = "primary",
                    tabPanel(title = "ECRI",
                             reactableOutput("rr_joined_filter")),
+                   tabPanel(title = "Veritec",
+                            reactableOutput("vt")),
                    tabPanel(title = "Discounts",
                             reactableOutput("disc"))
                  )
